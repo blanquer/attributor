@@ -68,4 +68,9 @@ describe Attributor::String do
       }.to raise_error(Attributor::IncompatibleTypeError)
     end
   end
+  
+  context 'json_schema' do
+    its(:json_schema_type){ should be(:string)}
+  end
+
 end

@@ -132,6 +132,20 @@ module Attributor
         'any'
       end
 
+      def describe_json_schema( root=false )
+        type_name = self.ancestors.find { |k| k.name && !k.name.empty? }.name
+        { type: json_schema_type, type_name: type_name.gsub( Attributor::MODULE_PREFIX_REGEX, '' ) }
+      end
+
+      def describe_option( option_name, option_value )
+        return case option_name
+        when :description
+          option_value
+        else
+          option_value  # By default, describing an option returns the hash with the specification
+        end
+      end
+
     end
   end
 end

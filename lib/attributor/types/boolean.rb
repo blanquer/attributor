@@ -28,6 +28,10 @@ module Attributor
       'boolean'
     end
 
+    def self.json_schema_type
+      :boolean
+    end
+
   end
 end
 

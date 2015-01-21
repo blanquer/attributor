@@ -98,12 +98,12 @@ module Attributor
 
     TOP_LEVEL_OPTIONS = [ :description, :values, :default, :example, :required, :required_if, :custom_data ]
     INTERNAL_OPTIONS = [:dsl_compiler,:dsl_compiler_options] # Options we don't want to expose when describing attributes
-
+    JSON_SCHEMA_UNSUPPORTED_OPTIONS = [ :required, :required_if ]
     def describe(shallow=true, example: nil)
       description = { }
       # Clone the common options
       TOP_LEVEL_OPTIONS.each do |option_name|
-        description[option_name] = self.options[option_name] if self.options.has_key? option_name
+        description[option_name] = self.describe_option(option_name) if self.options.has_key? option_name
       end
 
       # Make sure this option definition is not mistaken for the real generated example
@@ -114,7 +114,7 @@ module Attributor
       special_options = self.options.keys - TOP_LEVEL_OPTIONS - INTERNAL_OPTIONS
       description[:options] = {} unless special_options.empty?
       special_options.each do |opt_name|
-        description[:options][opt_name] = self.options[opt_name]
+        description[:options][opt_name] = self.describe_option(opt_name)
       end
       # Change the reference option to the actual class name.
       if ( reference = self.options[:reference] )
@@ -129,7 +129,6 @@ module Attributor
 
       description
     end
-
 
     def example_from_options(parent, context)
       val = self.options[:example]
@@ -150,6 +149,33 @@ module Attributor
         val
       end
       self.load( generated, context )
+    end
+
+    def describe_option( option_name )
+      self.type.describe_option( option_name, self.options[option_name] )
+    end
+
+    # FiXME: pass and utilize the "shallow" parameter
+    def describe_json_schema( shallow=true )
+      description = self.type.describe_json_schema(shallow)
+
+      displayable_options = self.options.keys - INTERNAL_OPTIONS - JSON_SCHEMA_UNSUPPORTED_OPTIONS
+      description[:options] = {} unless displayable_options.empty?
+      displayable_options.each do |option_name|
+        description[:options][option_name] = self.describe_option(option_name)
+      end
+
+      # Make sure this option definition is not mistaken for the real generated example
+      if ( ex_def = description.delete(:example) )
+        description[:example_definition] = ex_def
+      end
+
+      # Change the reference option to the actual class name.
+      if ( reference = self.options[:reference] )
+        description[:options][:reference] = reference.name
+      end
+
+      description
     end
 
     def example(context=nil, parent: nil, values:{})

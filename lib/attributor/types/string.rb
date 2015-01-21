@@ -33,5 +33,9 @@ module Attributor
       'string'
     end
 
+    def self.json_schema_type
+      :string
+    end
+
   end
 end

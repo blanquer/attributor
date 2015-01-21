@@ -14,6 +14,10 @@ module Attributor
     def self.example(context=nil, options:{})
       'An Object'
     end
+        
+    def self.json_schema_type
+      :object #FIXME: not sure this is the most appropriate, since an Attributor::Object can be anything
+    end
 
   end
 end

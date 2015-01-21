@@ -120,6 +120,9 @@ module Attributor
       hash
     end
 
+    def self.json_schema_type
+      :array
+    end
 
     def self.constructable?
       true

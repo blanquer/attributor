@@ -467,6 +467,34 @@ module Attributor
 
       hash
     end
+    
+    def self.describe_json_schema(shallow=false)
+      hash = super
+
+      if key_type
+        hash[:options] ||= {}
+        hash[:options][:key_type] = key_type.describe_json_schema
+      end
+
+      if self.keys.any?
+        # Spit keys if it's the root or if it's an anonymous structures
+        if ( !shallow || self.name == nil) && self.keys.any?
+          # FIXME: change to :keys when the praxis doc browser supports displaying those. or josep's demo is over.
+          hash[:properties] = self.keys.each_with_object({}) do |(sub_name, sub_attribute), sub_attributes|
+            sub_attributes[sub_name] = sub_attribute.describe_json_schema(true)
+          end
+        end
+      else
+        hash[:options] ||= {}
+        hash[:options][:value_type] = value_type.describe_json_schema(true)
+      end
+
+      hash
+    end
+
+    def self.json_schema_type
+      :object
+    end
 
     # TODO: Think about the format of the subcontexts to use: let's use .at(key.to_s)
     attr_reader :contents

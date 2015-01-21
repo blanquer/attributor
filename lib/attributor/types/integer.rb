@@ -58,5 +58,9 @@ module Attributor
       true
     end
 
+    def self.json_schema_type
+      :integer
+    end
+
   end
 end

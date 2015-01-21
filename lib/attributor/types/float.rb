@@ -26,6 +26,10 @@ module Attributor
     def self.family
       'numeric'
     end
-    
+
+    def self.json_schema_type
+      :number
+    end
+
   end
 end

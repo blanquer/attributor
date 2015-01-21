@@ -28,11 +28,12 @@ module Attributor
       rescue ArgumentError => e
         raise Attributor::DeserializationError, context: context, from: value.class, encoding: "DateTime" , value: value
       end
+
+      def self.json_schema_type
+        :string
+      end
+
     end
 
-    
-
-
   end
-
 end

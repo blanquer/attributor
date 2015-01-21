@@ -40,17 +40,67 @@ describe Attributor::Attribute do
     it { should == other_attribute}
   end
 
+  context 'describe_json_schema' do
+    let(:type) { PositiveIntegerType }
+
+    let(:attribute_options) { {:required => true, :values => ["one"], :description => "something", :max => 1000} }
+    let(:expected) do
+      h = {:type => {:name => type.name}, options: {} }
+      # Type builtin options
+      h[:options].merge!( min: 0 )
+      # Attribute options
+      common = {:values => ["one"], :description => "something", :max => 1000 }
+      h[:options].merge!( common )
+      h
+    end
+
+    its(:describe_json_schema) { should == expected }
+
+
+    context 'for an object type ' do
+      let(:attribute_options){ {description: "Attribute description"} }
+      subject(:attribute) do
+        Attributor::Attribute.new(Struct, attribute_options) do
+          attribute :id, Integer
+        end
+      end
+
+      let(:expected) do
+        {
+          type: :object,
+          type_name: "Struct" ,
+          properties: {
+             id: { type: :integer, type_name: "Integer"}
+          },
+          options: {
+            description: "Attribute description"
+          }
+        }
+      end
+
+      its(:describe_json_schema) { should == expected }
+
+#      subject(:description) { attribute.describe_json_schema }
+#
+#      it 'should match what we expect' do
+#        description.should == expected
+#      end
+
+    end
+  end
+
   context 'describe' do
-    let(:attribute_options) { {:required => true, :values => ["one"], :description => "something", :min => 0} }
+    let(:type) { PositiveIntegerType }
+    let(:attribute_options) { {:required => true, :values => ["one"], :description => "something", :max => 1000} }
     let(:expected) do
       h = {type: {name: 'String', id: type.id, family: type.family}}
       common = attribute_options.select{|k,v| Attributor::Attribute::TOP_LEVEL_OPTIONS.include? k }
       h.merge!( common )
-      h[:options] = {:min => 0 }
+      h[:options].merge!( max: 1000 )
       h
     end
 
-
+    # It has both the type-included options (min) as well as the attribute options (max)
     its(:describe) { should == expected }
 
     context 'with example options' do
