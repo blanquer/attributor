@@ -76,12 +76,6 @@ module Attributor
       end
     end
 
-    def self.describe(shallow=false)
-      hash = super
-      hash[:attributes] = hash.delete :keys
-      hash
-    end
-
     def self.check_option!(name, value)
       case name
       when :identity

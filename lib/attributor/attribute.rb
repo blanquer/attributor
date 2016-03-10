@@ -156,6 +156,11 @@ module Attributor
     end
 
     # FiXME: pass and utilize the "shallow" parameter
+    #required
+    #options
+    #type
+    #example
+    # UTILIZE THIS SITE! http://jsonschema.net/#/
     def describe_json_schema( shallow=true )
       description = self.type.describe_json_schema(shallow)
 
@@ -167,6 +172,7 @@ module Attributor
 
       # Make sure this option definition is not mistaken for the real generated example
       if ( ex_def = description.delete(:example) )
+      binding.pry
         description[:example_definition] = ex_def
       end
 

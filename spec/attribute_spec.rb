@@ -43,19 +43,26 @@ describe Attributor::Attribute do
   context 'describe_json_schema' do
     let(:type) { PositiveIntegerType }
 
-    let(:attribute_options) { {:required => true, :values => ["one"], :description => "something", :max => 1000} }
+    let(:attribute_options) do
+      {
+        required: true,
+        values: [1,20],
+        description: "something",
+        example: 20,
+        max: 1000
+      }
+    end
     let(:expected) do
-      h = {:type => {:name => type.name}, options: {} }
+      h = {:type => :integer, :type_name => type.name, options: {} }
       # Type builtin options
       h[:options].merge!( min: 0 )
       # Attribute options
-      common = {:values => ["one"], :description => "something", :max => 1000 }
+      common = {values: [1,20], description: "something", max: 1000 , example: 20}
       h[:options].merge!( common )
       h
     end
 
     its(:describe_json_schema) { should == expected }
-
 
     context 'for an object type ' do
       let(:attribute_options){ {description: "Attribute description"} }
@@ -90,13 +97,12 @@ describe Attributor::Attribute do
   end
 
   context 'describe' do
-    let(:type) { PositiveIntegerType }
-    let(:attribute_options) { {:required => true, :values => ["one"], :description => "something", :max => 1000} }
+    let(:attribute_options) { {:required => true, :values => ["one"], :description => "something", :min => 0} }
     let(:expected) do
       h = {type: {name: 'String', id: type.id, family: type.family}}
       common = attribute_options.select{|k,v| Attributor::Attribute::TOP_LEVEL_OPTIONS.include? k }
       h.merge!( common )
-      h[:options].merge!( max: 1000 )
+      h[:options] = {:min => 0 }
       h
     end
 

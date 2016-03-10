@@ -133,6 +133,12 @@ module Attributor
       end
 
       def describe_json_schema( root=false )
+        # I think that any type can also have these options...although for us, it seems more of an attribute concern?
+        # "title" : "Match anything",
+        # "description" : "This is a schema that matches anything.",
+        # "default" : "Default value"
+
+        # "enum": [1,2,3]  =>corresponds to our "values" concept
         type_name = self.ancestors.find { |k| k.name && !k.name.empty? }.name
         { type: json_schema_type, type_name: type_name.gsub( Attributor::MODULE_PREFIX_REGEX, '' ) }
       end

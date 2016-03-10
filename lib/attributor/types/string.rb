@@ -35,7 +35,14 @@ module Attributor
 
     def self.json_schema_type
       :string
+      # FULL RANGE OF THINGS FOR A STRING TYPE
+      # {
+      #   "type": "string",
+      #   "minLength": 2,
+      #   "maxLength": 3,
+      #   "pattern": "^(\\([0-9]{3}\\))?[0-9]{3}-[0-9]{4}$",
+      #   "format": where it can be on of "date-time" ,"email","hostname","ipv4","ipv6","uri",
+      # }
     end
-
   end
 end
