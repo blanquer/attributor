@@ -17,6 +17,15 @@ module Attributor
       value && value.iso8601
     end
 
-  
+    def self.json_schema_type
+      :string
+    end
+
+    def self.as_json_schema( shallow: false, example: nil, attribute_options: {} )
+      h = super
+      opts = ( self.respond_to?(:options) ) ? self.options.merge( attribute_options ) : attribute_options
+      h
+    end
+
   end
 end

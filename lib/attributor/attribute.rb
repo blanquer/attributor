@@ -161,25 +161,21 @@ module Attributor
     #type
     #example
     # UTILIZE THIS SITE! http://jsonschema.net/#/
-    def describe_json_schema( shallow=true )
-      description = self.type.describe_json_schema(shallow)
+    def as_json_schema(shallow: true, example: nil)
+      description = self.type.as_json_schema(shallow: shallow, example: example, attribute_options: self.options )
 
-      displayable_options = self.options.keys - INTERNAL_OPTIONS - JSON_SCHEMA_UNSUPPORTED_OPTIONS
-      description[:options] = {} unless displayable_options.empty?
-      displayable_options.each do |option_name|
-        description[:options][option_name] = self.describe_option(option_name)
-      end
-
-      # Make sure this option definition is not mistaken for the real generated example
-      if ( ex_def = description.delete(:example) )
-      binding.pry
-        description[:example_definition] = ex_def
-      end
+      description[:description] = self.options[:description] if self.options[:description]
+      description[:enum] = self.options[:values] if self.options[:values]
+      description[:default] = self.options[:default] if self.options[:default]
+      #TODO      description[:title] = "TODO: do we want to use a title??..."
 
       # Change the reference option to the actual class name.
       if ( reference = self.options[:reference] )
-        description[:options][:reference] = reference.name
+        description[:x_reference] = reference.name
       end
+
+      # TODO: not sure if that's correct (we used to get it from the described hash...
+      description[:example] = self.dump(example) if example
 
       description
     end

@@ -154,5 +154,14 @@ describe Attributor::Integer do
 
     end
   end
+
+  context '.as_json_schema' do
+    subject(:js){ type.as_json_schema }
+    it 'adds the right stuff' do
+      expect(Attributor::Numeric).to receive(:as_json_schema).and_call_original
+      expect(js.keys).to include(:multipleOf)
+      expect(js[:multipleOf]).to eq(1.0)
+    end
+  end
 end
 

@@ -132,37 +132,37 @@ module Attributor
         'any'
       end
 
-      def describe_json_schema( root=false )
-      # need to build a json schema that describes this structure
-        # {
-        # name: "a string"
-        # family: "a string"
-        # id: "a string"
-        # anonymous: bool
-        # example: ???
-        # } > where name, family and id are required
-        #
-        # So...something like this
-        {
-         "type" : "object"
-         "properties": {
-             "name":      { "type": "string" },
-             "family":    { "type": "string" },
-             "id":        { "type": "string" },
-             "anonymous": { "type": "boolean"},
-             "example": { ????? this depends on the subtype! ... maybe that needs to be patched by it...or if passed in, we can do example.class.describe_json_schema(shallow)?? }
-           },
-          "required": [ "name", "family", "id"]
-        }
-
-        # I think that any type can also have these options...although for us, it seems more of an attribute concern?
-        # "title" : "Match anything",
-        # "description" : "This is a schema that matches anything.",
-        # "default" : "Default value"
-
-        # "enum": [1,2,3]  =>corresponds to our "values" concept
+      def as_json_schema( shallow: false, example: nil, attribute_options: {} )
+#      # need to build a json schema that describes this structure
+#        # {
+#        # name: "a string"
+#        # family: "a string"
+#        # id: "a string"
+#        # anonymous: bool
+#        # example: ???
+#        # } > where name, family and id are required
+#        #
+#        # So...something like this
+#        {
+#         "type" : "object"
+#         "properties": {
+#             "name":      { "type": "string" },
+#             "family":    { "type": "string" },
+#             "id":        { "type": "string" },
+#             "anonymous": { "type": "boolean"},
+#             "example": { ????? this depends on the subtype! ... maybe that needs to be patched by it...or if passed in, we can do example.class.describe_json_schema(shallow)?? }
+#           },
+#          "required": [ "name", "family", "id"]
+#        }
+#
+#        # I think that any type can also have these options...although for us, it seems more of an attribute concern?
+#        # "title" : "Match anything",
+#        # "description" : "This is a schema that matches anything.",
+#        # "default" : "Default value"
+#
+#        # "enum": [1,2,3]  =>corresponds to our "values" concept
         type_name = self.ancestors.find { |k| k.name && !k.name.empty? }.name
-        { type: json_schema_type, type_name: type_name.gsub( Attributor::MODULE_PREFIX_REGEX, '' ) }
+        { type: json_schema_type, x_type_name: type_name.gsub( Attributor::MODULE_PREFIX_REGEX, '' ) }
       end
 
       def describe_option( option_name, option_value )

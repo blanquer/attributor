@@ -68,9 +68,19 @@ describe Attributor::String do
       }.to raise_error(Attributor::IncompatibleTypeError)
     end
   end
-  
+
   context 'json_schema' do
     its(:json_schema_type){ should be(:string)}
+
+
+    it 'adds regexp as pattern' do
+      js = type.as_json_schema(attribute_options: { regexp: /^Foobar$/ })
+
+      expect(js.keys).to include(:pattern)
+      expect(js[:pattern]).to eq('^Foobar$')
+    end
+
   end
+
 
 end

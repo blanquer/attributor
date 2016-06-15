@@ -3,8 +3,7 @@
 
 module Attributor
 
-  class Float
-    include Type
+  class Float < Numeric
 
     def self.native_type
       return ::Float
@@ -23,13 +22,6 @@ module Attributor
       super
     end
 
-    def self.family
-      'numeric'
-    end
-
-    def self.json_schema_type
-      :number
-    end
-
+    # TODO: implement as_json_schema to properly put a right "format" for this :integer type...
   end
 end

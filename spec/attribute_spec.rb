@@ -45,55 +45,29 @@ describe Attributor::Attribute do
 
     let(:attribute_options) do
       {
-        required: true,
         values: [1,20],
         description: "something",
         example: 20,
-        max: 1000
+        max: 1000,
+        default: 1
       }
     end
-    let(:expected) do
-      h = {:type => :integer, :type_name => type.name, options: {} }
-      # Type builtin options
-      h[:options].merge!( min: 0 )
-      # Attribute options
-      common = {values: [1,20], description: "something", max: 1000 , example: 20}
-      h[:options].merge!( common )
-      h
-    end
 
-    its(:describe_json_schema) { should == expected }
+    context 'reports all of the possible attributes' do
+      let(:js){ subject.as_json_schema(example: 20) }
 
-    context 'for an object type ' do
-      let(:attribute_options){ {description: "Attribute description"} }
-      subject(:attribute) do
-        Attributor::Attribute.new(Struct, attribute_options) do
-          attribute :id, Integer
-        end
+      it 'including the attribute-specific ones' do
+        expect(js[:enum]).to eq( [1,20])
+        expect(js[:description]).to eq( "something")
+        expect(js[:default]).to eq(1)
+        expect(js[:example]).to eq(20)
       end
 
-      let(:expected) do
-        {
-          type: :object,
-          type_name: "Struct" ,
-          properties: {
-             id: { type: :integer, type_name: "Integer"}
-          },
-          options: {
-            description: "Attribute description"
-          }
-        }
+      it 'as well as the type-specific ones' do
+        expect(js[:type]).to eq(:integer)
       end
-
-      its(:describe_json_schema) { should == expected }
-
-#      subject(:description) { attribute.describe_json_schema }
-#
-#      it 'should match what we expect' do
-#        description.should == expected
-#      end
-
     end
+
   end
 
   context 'describe' do

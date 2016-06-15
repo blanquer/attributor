@@ -62,5 +62,10 @@ module Attributor
       :integer
     end
 
+    def self.as_json_schema( shallow: false, example: nil, attribute_options: {} )
+      h = super
+      h[:multipleOf] = 1.0
+      h
+    end
   end
 end

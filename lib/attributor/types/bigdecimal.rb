@@ -21,10 +21,6 @@ module Attributor
       return BigDecimal(value)
     end
 
-    def self.json_schema_type
-      :number
-    end
-
   end
 
 end

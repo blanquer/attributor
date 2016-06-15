@@ -35,14 +35,22 @@ module Attributor
 
     def self.json_schema_type
       :string
-      # FULL RANGE OF THINGS FOR A STRING TYPE
-      # {
-      #   "type": "string",
-      #   "minLength": 2,
-      #   "maxLength": 3,
-      #   "pattern": "^(\\([0-9]{3}\\))?[0-9]{3}-[0-9]{4}$",
-      #   "format": where it can be on of "date-time" ,"email","hostname","ipv4","ipv6","uri",
-      # }
+    end
+
+    # TODO: we're passing the attribute options for now...might need to rethink ...although these are type-specific...
+    # TODO: multipleOf, minimum, maximum, exclusiveMinimum and exclusiveMaximum
+    def self.as_json_schema( shallow: false, example: nil, attribute_options: {} )
+      h = super
+      opts = ( self.respond_to?(:options) ) ? self.options.merge( attribute_options ) : attribute_options
+      h[:pattern] = self.human_readable_regexp(opts[:regexp]) if opts[:regexp]
+      # TODO: minLength, maxLength
+      # TODO: format
+      h
+    end
+
+    def self.human_readable_regexp( reg )
+      return $1 if reg.to_s =~ /\(\?[^:]+:(.+)\)/
+      reg
     end
   end
 end

@@ -8,6 +8,8 @@ describe Attributor::Boolean do
     type.new.is_a?(Attributor::Dumpable).should_not be(true)
   end
 
+  its(:json_schema_type){ should eq(:boolean)}
+
   context '.valid_type?' do
 
     context 'for incoming Boolean values' do
